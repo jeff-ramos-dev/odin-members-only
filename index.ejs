@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="/scripts/validation.js" defer></script>
+    <title></title>
+</head>
+<body>
+    <% if (user) { %>
+        <!-- user home page -->
+    <% } else { %>
+        <!-- login page -->
+        <%- include('sign-up-form'); %>
+    <% } %>
+</body>
+</html>

@@ -1,0 +1,183 @@
+:root {
+    --logo-primary-color: #af0e02;
+    --logo-secondary-color: #411a7b;
+    --cta-text-color: #9658ed; 
+    --main-background-color: #3a3a3a;
+    --form-background-color: #7b7b7b;
+    --focus-color: #325ab1;
+}
+
+* {
+    margin: 0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    color: rgb(232, 232, 232);
+}
+
+a, a:visited {
+    color: var(--focus-color);
+}
+
+.sidebar {
+
+}
+
+.hero {
+
+}
+
+.hero-title {
+
+}
+
+.logo {
+
+}
+
+.photo-credit {
+
+}
+
+.photo-credit > a {
+
+}
+
+main {
+
+}
+
+.header {
+
+}
+
+.cta {
+
+}
+
+.cta > em {
+
+}
+
+form {
+    margin-top: 1rem
+}
+
+.inputs {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.8);
+}
+
+.form-title {
+    grid-column-start: span 3;
+    font-size: 1.3rem;
+    margin: 1rem 0 0 1rem;
+}
+
+label {
+    position: absolute;
+    top: 0;
+    font-size: 0.7rem;
+}
+
+.input {
+    padding: 1rem;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+}
+
+.input:nth-of-type(even) {
+    grid-column-start: span 2;
+}
+
+.field {
+    height: 1.5rem;
+    width: 13rem;
+    border: 1px solid #4a4a4b;
+    border-radius: 3px;
+    padding-left: 0.5rem;
+}
+
+.field:focus {
+    outline: 2px solid var(--focus-color);
+}
+
+.error-message {
+    position: absolute;
+    bottom: 0;
+    font-size: 0.9rem;
+    color: rgb(162, 51, 51);
+}
+
+.error {
+    border: 1px solid red;
+}
+
+.error:focus {
+    border: 1px solid red;
+    border-radius: 3px;
+    outline: 2px solid red;
+}
+
+.validated {
+    border: 2px solid green;
+}
+
+.validated:focus {
+    border: 2px solid green;
+    border-radius: 3px;
+    outline: 2px solid green;
+}
+
+button {
+
+}
+
+.login { 
+
+}
+
+@media (max-width: 800px) {
+    body {
+
+    }
+
+    .header {
+
+    }
+
+    .form-title {
+
+    }
+
+    .inputs {
+
+    }
+
+    main {
+
+    }
+}
+
+@media (max-width: 600px) {
+    .inputs {
+
+    }
+
+    .form-title {
+
+    }
+
+    .input:nth-of-type(even) {
+
+    }
+}
