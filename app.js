@@ -7,6 +7,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const { COUNTRY_CODES } = require("./country-codes.js")
 
 const mongoDb = process.env.MONGO_DB;
 
@@ -19,9 +20,10 @@ const User = mongoose.model(
     new Schema({
         name: { type: String, required: true },
         email: { type: String, required: true },
+        phone: { type: String, match: /(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}/ },
         username: { type: String, required: true },
         password: { type: String, required: true },
-        membershipStatus: { type: String, required: true },
+        membershipStatus: { type: String, match: /(user)|(member)/, required: true },
     })
 );
 
@@ -92,32 +94,41 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-app.get("/", (req, res) => res.render("index", { user: req.user }));
-app.get("sign-up", (req, res) => res.render("sign-up-form"));
+app.get("/", (req, res) => res.render("index", { user: req.user, country_codes: COUNTRY_CODES }));
+app.get("/sign-up", (req, res) => res.render("sign-up-form", { country_codes: COUNTRY_CODES}));
 app.post("/sign-up", async (req, res, next) => {
-    bcrypt.hash(req.body.password, 10, async (err) => {
+    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         if (err) {
             return next(err);
         } else {
             const user = new User({
+                name: req.body["firstName"] + " " + req.body["lastName"],
+                email: req.body.email,
                 username: req.body.username,
                 password: hashedPassword,
+                membershipStatus: "user"
             });
+            if (req.body.phone) {
+                const phoneRegex = /[\(\)\s-\.]/g
+                const sanitizedPhone = `+${req.body["country-code"]} ${req.body.phone.replace(phoneRegex, "")}`
+                user.phone = sanitizedPhone
+            }
             const result = await user.save();
-            res.redirect("/");
+            res.redirect("/login");
         }
     });
 });
 
+app.get("/login", (req, res) => res.render("login"))
 app.post(
-    "/log-in",
+    "/login",
     passport.authenticate("local", {
         successRedirect: "/",
         failureRedirect: "/",
     })
 );
 
-app.get("/log-out", (req, res, next) => {
+app.get("/logout", (req, res, next) => {
     req.logout((err) => {
         if (err) {
             return next(err);
@@ -125,5 +136,6 @@ app.get("/log-out", (req, res, next) => {
         res.redirect("/");
     });
 });
+
 
 app.listen(3000, () => console.log("app listening on port 3000!"));
