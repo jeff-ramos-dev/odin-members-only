@@ -1,17 +1,20 @@
 // access input elements
 const firstName = document.querySelector(".first-name");
 const lastName = document.querySelector(".last-name");
+const username = document.querySelector(".username");
 const email = document.querySelector(".email");
 const phoneNumber = document.querySelector(".phone-number");
 const password = document.querySelector(".password");
 const passConfirm = document.querySelector(".confirm");
 
 const nameValidation = /[^A-Z-]/i;
+const usernameValidation = /^[a-zA-Z0-9]*$/
 const emailValidation = /\w+@\w+[.]\w{3}/;
 
 // access error elements
 const firstNameError = document.querySelector(".first-name-error");
 const lastNameError = document.querySelector(".last-name-error");
+const usernameError = document.querySelector(".username-error");
 const emailError = document.querySelector(".email-error");
 const phoneError = document.querySelector(".phone-error");
 const passwordError = document.querySelector(".password-error");
@@ -21,6 +24,8 @@ const confirmError = document.querySelector(".confirm-error");
 firstName.addEventListener("input", (e) => checkFirstName(e));
 
 lastName.addEventListener("input", (e) => checkLastName(e));
+
+username.addEventListener("input", (e) => checkUsername(e));
 
 email.addEventListener("input", () => checkEmail());
 
@@ -112,6 +117,52 @@ function checkLastName(e) {
         e.target.value.length === 0
     ) {
         lastName.classList.remove("validated");
+    }
+}
+
+function checkUsername(e) {
+    debugger;
+    if (usernameError.textContent) {
+        usernameError.textContent = "";
+    }
+
+    if (!usernameValidation.test(e.target.value)) {
+        console.log(e.target.value, usernameValidation.test(e.target.value))
+        usernameError.textContent = "please use alphanumeric characters only";
+        username.classList.remove("validated");
+        username.classList.add("error");
+        console.log(username)
+        console.log(usernameError)
+    } else if (username.classList.contains("error")) {
+        username.classList.remove("error");
+        username.classList.add("validated");
+        usernameError.textContent = "";
+    }
+
+    if (e.target.value.length > 24) {
+        e.target.value = e.target.value.slice(0, -1);
+        usernameError.textContent = "Username limit is 24 characters";
+    } else if (
+        (username.classList.contains("error") &&
+            usernameValidation.test(e.target.value)) ||
+        e.target.value.length === 0
+    ) {
+        username.classList.remove("error");
+        usernameError.textContent = "";
+
+        if (!username.classList.contains("validated"))
+            username.classList.add("validated");
+    }
+
+    if (!username.classList.contains("error")) {
+        username.classList.add("validated");
+    }
+
+    if (
+        username.classList.contains("validated") &&
+        e.target.value.length === 0
+    ) {
+        username.classList.remove("validated");
     }
 }
 
