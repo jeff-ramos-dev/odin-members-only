@@ -9,6 +9,7 @@
 <body>
     <% if (user) { %>
         <!-- user home page -->
+        Welcome <%= user.name.split(" ")[0] %>!
     <% } else { %>
         <!-- login page -->
         <%- include('sign-up-form'); %>
