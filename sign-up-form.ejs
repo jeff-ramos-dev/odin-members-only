@@ -5,12 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign-up</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
-    <script src="./script.js" defer></script>
 </head>
 <body>
     <div class="sidebar">
@@ -22,9 +16,14 @@
         <header class="header">
             <h2 class="cta">CALL TO ACTION</h2>
         </header>
-        <form action="" method="get">
-            <div class="inputs">
+        <form action="/sign-up" method="POST">
                 <h2 class="form-title">SIGN UP NOW!</h2>
+            <div class="inputs">
+                <div class="input">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" class="field username" autocomplete="username" required>
+                    <p class="error-message username-error"></p>
+                </div>
                 <div class="input">
                     <label for="first-name">First Name</label>
                     <input type="text" name="firstName" id="first-name" class="field first-name" required>
@@ -41,18 +40,25 @@
                     <p class="error-message email-error"></p>
                 </div>
                 <div class="input">
-                    <label for="phone-number">Phone Number</label>
-                    <input type="tel" name="phoneNumber" id="phone-number" class="field phone-number" pattern="^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$"required>
+                    <div class="country-code">
+                        <select name="country-code" id="country-code">
+                            <% for (const country of Object.keys(locals.country_codes)) { %>
+                                <option value=<%= locals.country_codes[country]["code"] %>><%= "+" + locals.country_codes[country]["code"] + " " + country %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <label for="phone-number">Phone Number(optional)</label>
+                    <input type="tel" name="phoneNumber" id="phone-number" class="field phone-number" pattern="^\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$"required>
                     <p class="error-message phone-error"></p>
                 </div>
                 <div class="input">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password" class="field password" required>
+                    <input type="password" name="password" id="password" class="field password" autocomplete="new-password" required>
                     <p class="error-message password-error"></p>
                 </div>
                 <div class="input">
                     <label for="confirm">Confirm Password</label>
-                    <input type="password" name="confirm" id="confirm" class="field confirm" required>
+                    <input type="password" name="confirm" id="confirm" class="field confirm" autocomplete="new-password" required>
                     <p class="error-message confirm-error"></p>
                 </div>
             </div>
