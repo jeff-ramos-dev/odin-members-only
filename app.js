@@ -7,7 +7,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { COUNTRY_CODES } = require("./country-codes.js")
+const { COUNTRY_CODES } = require("./country-codes.js");
 
 const mongoDb = process.env.MONGO_DB;
 
@@ -20,10 +20,18 @@ const User = mongoose.model(
     new Schema({
         name: { type: String, required: true },
         email: { type: String, required: true },
-        phone: { type: String, match: /(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}/ },
+        phone: {
+            type: String,
+            match: /(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}/,
+        },
         username: { type: String, required: true },
         password: { type: String, required: true },
-        membershipStatus: { type: String, match: /(user)|(member)/, required: true },
+        date_joined: { type: Date, required: true },
+        membershipStatus: {
+            type: String,
+            match: /(user)|(member)|(admin)/,
+            required: true,
+        },
     })
 );
 
@@ -94,32 +102,62 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-app.get("/", (req, res) => res.render("index", { user: req.user, country_codes: COUNTRY_CODES }));
-app.get("/sign-up", (req, res) => res.render("sign-up-form", { country_codes: COUNTRY_CODES}));
+app.get("/", (req, res) =>
+    res.render("index", { user: req.user, country_codes: COUNTRY_CODES })
+);
 app.post("/sign-up", async (req, res, next) => {
     bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-        if (err) {
-            return next(err);
-        } else {
+        try {
+            const existingEmail = await User.findOne({ email: req.body.email });
+            if (existingEmail) {
+                return res.render("index", {
+                    user: null,
+                    country_codes: COUNTRY_CODES,
+                    error: "Email already in use",
+                });
+            }
+            const existingUsername = await User.findOne({
+                username: req.body.username,
+            });
+            if (existingUsername) {
+                return res.render("index", {
+                    user: null,
+                    country_codes: COUNTRY_CODES,
+                    error: "Username already taken",
+                });
+            }
+            const firstName = req.body.firstName.replace(
+                req.body.firstName.charAt(0),
+                req.body.firstName.charAt(0).toUpperCase()
+            );
+            const lastName = req.body.lastName.replace(
+                req.body.lastName.charAt(0),
+                req.body.lastName.charAt(0).toUpperCase()
+            );
             const user = new User({
-                name: req.body["firstName"] + " " + req.body["lastName"],
+                name: firstName + " " + lastName,
                 email: req.body.email,
                 username: req.body.username,
                 password: hashedPassword,
-                membershipStatus: "user"
+                date_joined: new Date(),
+                membershipStatus: "user",
             });
             if (req.body.phone) {
-                const phoneRegex = /[\(\)\s-\.]/g
-                const sanitizedPhone = `+${req.body["country-code"]} ${req.body.phone.replace(phoneRegex, "")}`
-                user.phone = sanitizedPhone
+                const phoneRegex = /[\(\)\s-\.]/g;
+                const sanitizedPhone = `+${
+                    req.body["country-code"]
+                } ${req.body.phone.replace(phoneRegex, "")}`;
+                user.phone = sanitizedPhone;
             }
             const result = await user.save();
             res.redirect("/login");
+        } catch (err) {
+            next(err);
         }
     });
 });
 
-app.get("/login", (req, res) => res.render("login"))
+app.get("/login", (req, res) => res.render("login"));
 app.post(
     "/login",
     passport.authenticate("local", {
@@ -136,6 +174,5 @@ app.get("/logout", (req, res, next) => {
         res.redirect("/");
     });
 });
-
 
 app.listen(3000, () => console.log("app listening on port 3000!"));
