@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "build": "webpack",
+    "start": "weback serve --open"
   },
   "author": "",
   "license": "MIT",
@@ -20,7 +22,8 @@
     "express-session": "^1.17.3",
     "mongoose": "^8.0.3",
     "passport": "^0.7.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "webpack": "^5.90.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
