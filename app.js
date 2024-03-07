@@ -40,7 +40,7 @@ const Post = mongoose.model(
     new Schema({
         author_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         date_created: { type: Date, required: true },
-        title: { type: String, required: true, maxLength: 60 },
+        subject: { type: String, required: true, maxLength: 60 },
         text: { type: String, maxLength: 1000 },
     })
 );
@@ -102,15 +102,27 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-app.get("/", (req, res) =>
-    res.render("index", { user: req.user, country_codes: COUNTRY_CODES })
-);
+app.get("/", async (req, res, next) => {
+    try {
+        const posts = await Post.find();
+        res.render("templates/index", {
+            user: req.user,
+            title: "Members Only Message Board",
+            country_codes: COUNTRY_CODES,
+            posts: posts,
+        });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
 app.post("/sign-up", async (req, res, next) => {
     bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         try {
             const existingEmail = await User.findOne({ email: req.body.email });
             if (existingEmail) {
-                return res.render("index", {
+                return res.render("templates/index", {
                     user: null,
                     country_codes: COUNTRY_CODES,
                     error: "Email already in use",
@@ -120,7 +132,7 @@ app.post("/sign-up", async (req, res, next) => {
                 username: req.body.username,
             });
             if (existingUsername) {
-                return res.render("index", {
+                return res.render("templates/index", {
                     user: null,
                     country_codes: COUNTRY_CODES,
                     error: "Username already taken",
@@ -149,7 +161,7 @@ app.post("/sign-up", async (req, res, next) => {
                 } ${req.body.phone.replace(phoneRegex, "")}`;
                 user.phone = sanitizedPhone;
             }
-            const result = await user.save();
+            await user.save();
             res.redirect("/login");
         } catch (err) {
             next(err);
@@ -157,7 +169,28 @@ app.post("/sign-up", async (req, res, next) => {
     });
 });
 
-app.get("/login", (req, res) => res.render("login"));
+app.get("/new", function (req, res, next) {
+    res.render("templates/message-form", { title: "New Message" });
+});
+
+app.post("/new", async function (req, res, next) {
+    const newMessage = new Post({
+        author_id: req.user._id,
+        date_created: new Date(),
+        subject: req.body["message-subject"],
+        text: req.body["message-text"],
+    });
+
+    try {
+        await newMessage.save();
+        res.redirect("/");
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+app.get("/login", (req, res) => res.render("templates/login"));
 app.post(
     "/login",
     passport.authenticate("local", {
