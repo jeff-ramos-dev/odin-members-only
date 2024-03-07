@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <title></title>
+</head>
+<body>
+    <a href="/" class="home" style="align-self: flex-start"><button type="button">Home</button></a>
+    <h1><%= title %></h1>
+    <form method="POST", action="/new" class="form">
+        <div class="input" style="place-self: center;">
+            <label for="message-subject">Subject</label>
+            <input type="text" class="field" name="message-subject" id="message-subject" maxlength="60">
+        </div>
+        <div class="input textarea" style="place-self: center;">
+            <label for="message-text">Message</label>
+            <textarea class="field" name="message-text" id="message-text" maxlength="1000"></textarea>
+        </div>
+        <button type="submit" class="submit">SUBMIT</button>
+    </form> 
+
+    <a href="/logout" class="logout"><button type="button">Log Out</button></a>
+</body>
+</html>

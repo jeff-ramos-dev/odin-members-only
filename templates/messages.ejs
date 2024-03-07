@@ -1,0 +1,13 @@
+<h1 class="title"><%= title %></h1>
+<p class="welcome">Welcome to <%= title %>, <%= user.name.split(" ")[0] %>!</p>
+<ul class="message-list">
+<% for (let i = 0; i < posts.length; i++) { %>
+    <li class="message">
+        <h2 class="message-subject"><%= posts[i].subject %></h2>
+        <p class="message-text"><%= posts[i].text %></p>
+        <p class="message-author">- <%= user.name %></p>
+        <p class="message-date"><%= posts[i].date_created.toString().slice(0,24) %></p>
+    </li>
+<% } %>
+<a href="/new"><button type="button" class="add">ADD A NEW MESSAGE</button></a>
+</ul>
