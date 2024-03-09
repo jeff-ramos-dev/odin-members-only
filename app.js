@@ -6,7 +6,7 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { User, Post } from "./models.js";
 const { COUNTRY_CODES } = require("./country-codes.js");
 
 const mongoDb = process.env.MONGO_DB;
@@ -14,36 +14,6 @@ const mongoDb = process.env.MONGO_DB;
 mongoose.connect(mongoDb);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));
-
-const User = mongoose.model(
-    "User",
-    new Schema({
-        name: { type: String, required: true },
-        email: { type: String, required: true },
-        phone: {
-            type: String,
-            match: /(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}/,
-        },
-        username: { type: String, required: true },
-        password: { type: String, required: true },
-        date_joined: { type: Date, required: true },
-        membershipStatus: {
-            type: String,
-            match: /(user)|(member)|(admin)/,
-            required: true,
-        },
-    })
-);
-
-const Post = mongoose.model(
-    "Post",
-    new Schema({
-        author_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        date_created: { type: Date, required: true },
-        subject: { type: String, required: true, maxLength: 60 },
-        text: { type: String, maxLength: 1000 },
-    })
-);
 
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
