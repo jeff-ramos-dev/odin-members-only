@@ -6,7 +6,7 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
-import { User, Post } from "./models.js";
+const { User, Post } = require("./models.js");
 const { COUNTRY_CODES } = require("./country-codes.js");
 
 const mongoDb = process.env.MONGO_DB;
